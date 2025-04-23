@@ -1,0 +1,141 @@
+
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, Clock } from "lucide-react";
+import { useQuizContext } from "@/hooks/useQuizContext";
+import { useToast } from "@/hooks/use-toast";
+
+const QuizPage = () => {
+  const navigate = useNavigate();
+  const { type } = useParams<{ type: string }>();
+  const { toast } = useToast();
+  const { questions, updateQuestion, calculateResults } = useQuizContext();
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answer, setAnswer] = useState<string>("");
+  const [elapsedTime, setElapsedTime] = useState(0);
+  const [startTime, setStartTime] = useState(Date.now());
+
+  // Update the timer every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+    }, 1000);
+    
+    return () => clearInterval(timer);
+  }, [startTime]);
+
+  useEffect(() => {
+    // Reset the start time when moving to a new question
+    setStartTime(Date.now());
+    setAnswer("");
+  }, [currentQuestionIndex]);
+
+  // Redirect if no questions
+  useEffect(() => {
+    if (questions.length === 0) {
+      navigate("/");
+      toast({
+        title: "No quiz in progress",
+        description: "Please select a quiz type from the home page.",
+      });
+    }
+  }, [questions, navigate, toast]);
+
+  if (questions.length === 0) {
+    return null; // Don't render anything before redirect
+  }
+
+  const currentQuestion = questions[currentQuestionIndex];
+  const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+  const isAnswered = questions.filter(q => q.userAnswer !== null).length;
+
+  const handleSubmitAnswer = () => {
+    if (answer.trim() === "") {
+      toast({
+        title: "Input required",
+        description: "Please enter an answer before continuing.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Update the current question with user's answer
+    updateQuestion(currentQuestion.id, parseFloat(answer));
+    
+    // Move to next question or submit quiz
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else {
+      // Final question answered, submit quiz
+      const results = calculateResults();
+      navigate("/results", { state: results });
+    }
+  };
+
+  const formatQuizTypeText = (type: string = "") => {
+    return type.charAt(0).toUpperCase() + type.slice(1);
+  };
+
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-[#f0f4f8] to-[#d0e1f9] p-4">
+      <header className="w-full text-center bg-gradient-to-r from-[#4c6ef5] to-[#3b5bdb] text-white py-6 flex items-center justify-center shadow-lg z-10 mb-8">
+        <h1 className="text-2xl font-bold tracking-wide m-0">{formatQuizTypeText(type)} Quiz</h1>
+      </header>
+
+      <div className="w-full max-w-md">
+        <Card className="mb-4">
+          <CardContent className="pt-6">
+            <div className="flex justify-between items-center mb-4">
+              <div className="text-sm font-medium">
+                Question {currentQuestionIndex + 1} of {questions.length}
+              </div>
+              <div className="flex items-center text-sm font-medium">
+                <Clock className="h-4 w-4 mr-1" />
+                {formatTime(elapsedTime)}
+              </div>
+            </div>
+            
+            <Progress value={progress} className="h-2 mb-6" />
+            
+            <div className="mb-6">
+              <div className="text-sm text-muted-foreground mb-1">Completed: {isAnswered} / {questions.length}</div>
+              <div className="text-2xl font-bold text-center p-6 bg-gray-50 rounded-md mb-4 border">
+                {currentQuestion.question} = ?
+              </div>
+              
+              <div className="mb-6">
+                <Input
+                  type="number"
+                  step="0.01"
+                  placeholder="Enter your answer"
+                  value={answer}
+                  onChange={(e) => setAnswer(e.target.value)}
+                  className="text-lg text-center"
+                />
+              </div>
+            </div>
+            
+            <Button
+              onClick={handleSubmitAnswer}
+              className="w-full bg-gradient-to-r from-[#4c6ef5] to-[#3b5bdb]"
+            >
+              {currentQuestionIndex < questions.length - 1 ? "Next Question" : "Submit Quiz"}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default QuizPage;
