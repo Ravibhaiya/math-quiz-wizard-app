@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,7 +18,6 @@ const QuizPage = () => {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [startTime, setStartTime] = useState(Date.now());
 
-  // Update the timer every second
   useEffect(() => {
     const timer = setInterval(() => {
       setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
@@ -29,12 +27,10 @@ const QuizPage = () => {
   }, [startTime]);
 
   useEffect(() => {
-    // Reset the start time when moving to a new question
     setStartTime(Date.now());
     setAnswer("");
   }, [currentQuestionIndex]);
 
-  // Redirect if no questions
   useEffect(() => {
     if (questions.length === 0) {
       navigate("/");
@@ -46,7 +42,7 @@ const QuizPage = () => {
   }, [questions, navigate, toast]);
 
   if (questions.length === 0) {
-    return null; // Don't render anything before redirect
+    return null;
   }
 
   const currentQuestion = questions[currentQuestionIndex];
@@ -63,14 +59,11 @@ const QuizPage = () => {
       return;
     }
 
-    // Update the current question with user's answer
     updateQuestion(currentQuestion.id, parseFloat(answer));
     
-    // Move to next question or submit quiz
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // Final question answered, submit quiz
       const results = calculateResults();
       navigate("/results", { state: results });
     }
@@ -87,11 +80,7 @@ const QuizPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-[#f0f4f8] to-[#d0e1f9] p-4">
-      <header className="w-full text-center bg-gradient-to-r from-[#4c6ef5] to-[#3b5bdb] text-white py-6 flex items-center justify-center shadow-lg z-10 mb-8">
-        <h1 className="text-2xl font-bold tracking-wide m-0">{formatQuizTypeText(type)} Quiz</h1>
-      </header>
-
+    <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-[#f0f4f8] to-[#d0e1f9] p-4 fixed inset-0">
       <div className="w-full max-w-md">
         <Card className="mb-4">
           <CardContent className="pt-6">

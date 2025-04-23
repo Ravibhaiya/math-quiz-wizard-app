@@ -40,9 +40,9 @@ const ResultsPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-[#f0f4f8] to-[#d0e1f9] p-4">
-      <header className="w-full text-center bg-gradient-to-r from-[#4c6ef5] to-[#3b5bdb] text-white py-6 flex items-center justify-center shadow-lg z-10 mb-8">
-        <h1 className="text-2xl font-bold tracking-wide m-0">{formatQuizTypeText(results.type)} Quiz Results</h1>
+    <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-[#f0f4f8] to-[#d0e1f9] p-4 fixed inset-0">
+      <header className="w-full text-center bg-transparent text-black py-6 flex items-center justify-center z-10 mb-8">
+        <h1 className="text-3xl font-bold tracking-wide m-0">Results</h1>
       </header>
 
       <div className="w-full max-w-md">
