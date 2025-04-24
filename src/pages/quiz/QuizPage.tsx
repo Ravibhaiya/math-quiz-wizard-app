@@ -64,14 +64,19 @@ const QuizPage = () => {
     const numericAnswer = parseFloat(answer);
     console.log(`Submitting answer: ${numericAnswer} for question ${currentQuestion.id}`);
     
+    // Update the question with the answer
     updateQuestion(currentQuestion.id, numericAnswer);
     
     if (currentQuestionIndex < questions.length - 1) {
+      // Move to next question
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      const results = calculateResults();
-      console.log("Final quiz results:", results);
-      navigate("/results", { state: results });
+      // For the last question, wait a moment to ensure state updates before calculating results
+      setTimeout(() => {
+        const results = calculateResults();
+        console.log("Final quiz results:", results);
+        navigate("/results", { state: results });
+      }, 100);
     }
   };
 

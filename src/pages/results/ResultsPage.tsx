@@ -142,13 +142,16 @@ const ResultsPage = () => {
                   isCorrect: areAnswersEqual(question.userAnswer, question.correctAnswer)
                 });
                 
+                const isAnswered = question.userAnswer !== undefined && question.userAnswer !== null;
+                const isCorrect = isAnswered && areAnswersEqual(question.userAnswer, question.correctAnswer);
+                
                 return (
                   <div 
                     key={question.id}
                     className={`p-3 rounded-md border ${
-                      areAnswersEqual(question.userAnswer, question.correctAnswer)
-                        ? 'bg-green-50 border-green-200'
-                        : 'bg-red-50 border-red-200'
+                      isAnswered
+                        ? (isCorrect ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200')
+                        : 'bg-gray-50 border-gray-200'
                     }`}
                   >
                     <div className="flex justify-between items-start">
@@ -159,19 +162,17 @@ const ResultsPage = () => {
                         </div>
                         <div className="text-sm mt-1">
                           Your answer: <span className="font-semibold">
-                            {question.userAnswer !== undefined && question.userAnswer !== null 
-                              ? question.userAnswer 
-                              : "No answer"}
+                            {isAnswered ? question.userAnswer : "No answer"}
                           </span>
                         </div>
                       </div>
                       <div className={`rounded-full p-1 ${
-                        areAnswersEqual(question.userAnswer, question.correctAnswer)
-                          ? 'bg-green-100 text-green-600'
-                          : 'bg-red-100 text-red-500'
+                        isAnswered
+                          ? (isCorrect ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-500')
+                          : 'bg-gray-100 text-gray-500'
                       }`}>
-                        {areAnswersEqual(question.userAnswer, question.correctAnswer) 
-                          ? <Check className="h-5 w-5" /> 
+                        {isAnswered
+                          ? (isCorrect ? <Check className="h-5 w-5" /> : <X className="h-5 w-5" />)
                           : <X className="h-5 w-5" />}
                       </div>
                     </div>

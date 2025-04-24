@@ -49,9 +49,12 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       throw new Error('Quiz type or settings not defined');
     }
 
+    // Create a copy of the questions to ensure we're not losing state
+    const currentQuestions = [...questions];
+    
     // Log all questions with their answers for debugging
     console.log("Questions with answers for results calculation:", 
-      questions.map(q => ({
+      currentQuestions.map(q => ({
         id: q.id,
         question: q.question,
         correctAnswer: q.correctAnswer,
@@ -59,7 +62,7 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }))
     );
 
-    const completedQuestions = questions.filter(q => q.userAnswer !== undefined && q.userAnswer !== null);
+    const completedQuestions = currentQuestions.filter(q => q.userAnswer !== undefined && q.userAnswer !== null);
     console.log(`Completed questions count: ${completedQuestions.length}`);
     
     const correctAnswers = completedQuestions.filter(q => 
@@ -89,7 +92,7 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       incorrectAnswers,
       accuracy,
       averageTime,
-      questions
+      questions: currentQuestions
     };
     
     console.log("Final quiz results:", quizResults);
