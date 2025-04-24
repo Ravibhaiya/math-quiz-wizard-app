@@ -76,7 +76,7 @@ const QuizPage = () => {
         const results = calculateResults();
         console.log("Final quiz results:", results);
         navigate("/results", { state: results });
-      }, 100);
+      }, 300);
     }
   };
 
