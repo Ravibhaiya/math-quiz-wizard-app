@@ -48,7 +48,7 @@ const QuizPage = () => {
 
   const currentQuestion = questions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
-  const isAnswered = questions.filter(q => q.userAnswer !== null).length;
+  const isAnswered = questions.filter(q => q.userAnswer !== undefined && q.userAnswer !== null).length;
 
   const handleSubmitAnswer = () => {
     if (answer.trim() === "") {
@@ -60,12 +60,17 @@ const QuizPage = () => {
       return;
     }
 
-    updateQuestion(currentQuestion.id, parseFloat(answer));
+    // Convert string to number and ensure it's saved correctly
+    const numericAnswer = parseFloat(answer);
+    console.log(`Submitting answer: ${numericAnswer} for question ${currentQuestion.id}`);
+    
+    updateQuestion(currentQuestion.id, numericAnswer);
     
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       const results = calculateResults();
+      console.log("Final quiz results:", results);
       navigate("/results", { state: results });
     }
   };
