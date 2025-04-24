@@ -71,12 +71,15 @@ const QuizPage = () => {
       // Move to next question
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // For the last question, wait a moment to ensure state updates before calculating results
-      setTimeout(() => {
-        const results = calculateResults();
-        console.log("Final quiz results:", results);
-        navigate("/results", { state: results });
-      }, 300);
+  // First update the question with the answer
+  updateQuestion(currentQuestion.id, numericAnswer);
+  
+  // Then wait longer (300ms instead of 100ms) before calculating results
+  setTimeout(() => {
+    const results = calculateResults();
+    console.log("Final quiz results:", results);
+    navigate("/results", { state: results });
+  }, 300);
     }
   };
 
