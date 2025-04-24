@@ -31,6 +31,18 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
   };
 
+  // Helper function to strictly compare answers with proper number comparison
+  const areAnswersEqual = (userAnswer: number | undefined | null, correctAnswer: number) => {
+    if (userAnswer === undefined || userAnswer === null) return false;
+    
+    // Handle floating point comparison with small epsilon
+    if (Math.abs(Number(userAnswer) - Number(correctAnswer)) < 0.001) {
+      return true;
+    }
+    
+    return Number(userAnswer) === Number(correctAnswer);
+  };
+
   const calculateResults = (): QuizResults => {
     if (!quizType || !settings) {
       throw new Error('Quiz type or settings not defined');
@@ -38,7 +50,7 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const completedQuestions = questions.filter(q => q.userAnswer !== undefined);
     const correctAnswers = completedQuestions.filter(q => 
-      Number(q.userAnswer) === Number(q.correctAnswer)
+      areAnswersEqual(q.userAnswer, q.correctAnswer)
     ).length;
     const incorrectAnswers = completedQuestions.length - correctAnswers;
     

@@ -39,6 +39,18 @@ const ResultsPage = () => {
     return type.charAt(0).toUpperCase() + type.slice(1);
   };
 
+  // Helper function to strictly compare answers, accounting for floating point precision issues
+  const areAnswersEqual = (userAnswer: number | undefined | null, correctAnswer: number) => {
+    if (userAnswer === undefined || userAnswer === null) return false;
+    
+    // Handle floating point comparison with small epsilon
+    if (Math.abs(Number(userAnswer) - Number(correctAnswer)) < 0.001) {
+      return true;
+    }
+    
+    return Number(userAnswer) === Number(correctAnswer);
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-[#f0f4f8] to-[#d0e1f9] p-4 overflow-auto">
       <header className="w-full text-center bg-transparent text-black py-6 flex items-center justify-center z-10 mb-8">
@@ -113,7 +125,7 @@ const ResultsPage = () => {
                 <div 
                   key={question.id}
                   className={`p-3 rounded-md border ${
-                    question.userAnswer === question.correctAnswer
+                    areAnswersEqual(question.userAnswer, question.correctAnswer)
                       ? 'bg-green-50 border-green-200'
                       : 'bg-red-50 border-red-200'
                   }`}
@@ -125,15 +137,15 @@ const ResultsPage = () => {
                         Correct answer: <span className="font-semibold">{question.correctAnswer}</span>
                       </div>
                       <div className="text-sm mt-1">
-                        Your answer: <span className="font-semibold">{question.userAnswer}</span>
+                        Your answer: <span className="font-semibold">{question.userAnswer !== null && question.userAnswer !== undefined ? question.userAnswer : "No answer"}</span>
                       </div>
                     </div>
                     <div className={`rounded-full p-1 ${
-                      question.userAnswer === question.correctAnswer
+                      areAnswersEqual(question.userAnswer, question.correctAnswer)
                         ? 'bg-green-100 text-green-600'
                         : 'bg-red-100 text-red-500'
                     }`}>
-                      {question.userAnswer === question.correctAnswer 
+                      {areAnswersEqual(question.userAnswer, question.correctAnswer) 
                         ? <Check className="h-5 w-5" /> 
                         : <X className="h-5 w-5" />}
                     </div>
