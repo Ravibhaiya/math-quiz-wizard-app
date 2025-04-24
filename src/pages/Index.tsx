@@ -34,13 +34,13 @@ const Index = () => {
       </header>
 
       <main className="w-[90%] max-w-[600px] text-center py-8 mt-2 pb-12">
-        <div className="sticky top-0 bg-transparent py-4 mb-5 z-5">
+        <div className="sticky top-0 bg-[#f0f4f8] py-4 mb-5 z-20">
           <h2 className="text-2xl font-semibold inline-block pb-2 relative text-[#2b3a55] m-0 after:content-[''] after:w-[70px] after:h-1 after:bg-[#4c6ef5] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:rounded-md">
             Basic Calculation
           </h2>
         </div>
         
-        <ul className="list-none p-0 m-0">
+        <ul className="list-none p-0 m-0 relative z-10">
           {quizTopics.map((item, index) => (
             <li
               key={index}

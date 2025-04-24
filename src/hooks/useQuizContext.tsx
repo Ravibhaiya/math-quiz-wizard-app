@@ -37,16 +37,22 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     const completedQuestions = questions.filter(q => q.userAnswer !== undefined);
-    const correctAnswers = completedQuestions.filter(q => q.userAnswer === q.correctAnswer).length;
+    const correctAnswers = completedQuestions.filter(q => 
+      Number(q.userAnswer) === Number(q.correctAnswer)
+    ).length;
     const incorrectAnswers = completedQuestions.length - correctAnswers;
     
     const accuracy = completedQuestions.length > 0 
       ? (correctAnswers / completedQuestions.length) * 100 
       : 0;
     
-    const timeTaken = completedQuestions.map(q => (q.endTime || Date.now()) - q.startTime);
+    // Calculate the time taken for each question and then average it
+    const timeTaken = completedQuestions.map(q => 
+      ((q.endTime || Date.now()) - q.startTime) / 1000 // Convert to seconds
+    );
+    
     const averageTime = timeTaken.length > 0 
-      ? timeTaken.reduce((sum, time) => sum + time, 0) / timeTaken.length / 1000 
+      ? timeTaken.reduce((sum, time) => sum + time, 0) / timeTaken.length
       : 0;
 
     const quizResults: QuizResults = {

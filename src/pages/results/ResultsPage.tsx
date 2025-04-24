@@ -115,9 +115,7 @@ const ResultsPage = () => {
                   className={`p-3 rounded-md border ${
                     question.userAnswer === question.correctAnswer
                       ? 'bg-green-50 border-green-200'
-                      : question.userAnswer !== undefined
-                      ? 'bg-red-50 border-red-200'
-                      : 'bg-gray-50 border-gray-200'
+                      : 'bg-red-50 border-red-200'
                   }`}
                 >
                   <div className="flex justify-between items-start">
@@ -126,23 +124,19 @@ const ResultsPage = () => {
                       <div className="text-sm mt-1">
                         Correct answer: <span className="font-semibold">{question.correctAnswer}</span>
                       </div>
-                      {question.userAnswer !== undefined && (
-                        <div className="text-sm mt-1">
-                          Your answer: <span className="font-semibold">{question.userAnswer}</span>
-                        </div>
-                      )}
-                    </div>
-                    {question.userAnswer !== undefined && (
-                      <div className={`rounded-full p-1 ${
-                        question.userAnswer === question.correctAnswer
-                          ? 'bg-green-100 text-green-600'
-                          : 'bg-red-100 text-red-500'
-                      }`}>
-                        {question.userAnswer === question.correctAnswer 
-                          ? <Check className="h-5 w-5" /> 
-                          : <X className="h-5 w-5" />}
+                      <div className="text-sm mt-1">
+                        Your answer: <span className="font-semibold">{question.userAnswer}</span>
                       </div>
-                    )}
+                    </div>
+                    <div className={`rounded-full p-1 ${
+                      question.userAnswer === question.correctAnswer
+                        ? 'bg-green-100 text-green-600'
+                        : 'bg-red-100 text-red-500'
+                    }`}>
+                      {question.userAnswer === question.correctAnswer 
+                        ? <Check className="h-5 w-5" /> 
+                        : <X className="h-5 w-5" />}
+                    </div>
                   </div>
                 </div>
               ))}
