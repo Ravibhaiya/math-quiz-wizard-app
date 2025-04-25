@@ -109,9 +109,9 @@ const ResultsPage = () => {
               </div>
 
               <div className="bg-gray-50 p-4 rounded-md text-center border">
-                <div className="text-sm text-muted-foreground mb-2">Average Time per Question</div>
-                <div className="text-xl font-bold">{formatTime(results.averageTime)} ({results.averageTime.toFixed(1)} seconds)</div>
-              </div>
+  <div className="text-sm text-muted-foreground mb-2">Average Time per Question</div>
+  <div className="text-xl font-bold">{formatReadableTime(results.averageTime)}</div>
+</div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
