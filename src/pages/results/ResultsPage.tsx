@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,6 +29,9 @@ const ResultsPage = () => {
         correctAnswer: q.correctAnswer,
         userAnswer: q.userAnswer
       })));
+      
+      // Log the average time to verify it's correct
+      console.log("Average time per question:", results.averageTime);
     }
   }, [results]);
 
@@ -63,32 +65,30 @@ const ResultsPage = () => {
     return Number(userAnswer) === Number(correctAnswer);
   };
   
-  // Replace the existing formatTime function in ResultsPage.tsx with this improved version:
-const formatReadableTime = (seconds: number) => {
-  // Make sure we're working with the actual average time
-  if (seconds < 60) {
-    // If less than a minute, show in seconds
-    return `${seconds.toFixed(1)} seconds`;
-  } else {
-    // If a minute or more, show in minutes and seconds format
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    
-    // Handle singular/plural for minutes
-    const minuteText = minutes === 1 ? "minute" : "minutes";
-    
-    // Only include seconds part if there are seconds to show
-    if (remainingSeconds > 0) {
-      // Handle singular/plural for seconds
-      const secondText = remainingSeconds === 1 ? "second" : "seconds";
-      return `${minutes} ${minuteText} ${remainingSeconds} ${secondText}`;
+  // Improved function to format time in a readable way
+  const formatReadableTime = (seconds: number) => {
+    // Make sure we're working with the actual average time per question
+    if (seconds < 60) {
+      // If less than a minute, show in seconds
+      return `${seconds.toFixed(1)} seconds`;
     } else {
-      return `${minutes} ${minuteText}`;
+      // If a minute or more, show in minutes and seconds format
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = Math.floor(seconds % 60);
+      
+      // Handle singular/plural for minutes
+      const minuteText = minutes === 1 ? "minute" : "minutes";
+      
+      // Only include seconds part if there are seconds to show
+      if (remainingSeconds > 0) {
+        // Handle singular/plural for seconds
+        const secondText = remainingSeconds === 1 ? "second" : "seconds";
+        return `${minutes} ${minuteText} ${remainingSeconds} ${secondText}`;
+      } else {
+        return `${minutes} ${minuteText}`;
+      }
     }
-  }
-};
-
-  
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-[#f0f4f8] to-[#d0e1f9] p-4 overflow-auto">
