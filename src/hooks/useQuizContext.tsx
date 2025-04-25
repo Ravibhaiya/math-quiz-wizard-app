@@ -93,7 +93,7 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     
     // Calculate average time per question (in seconds)
     const averageTime = questionCount > 0 ? totalTimeInSeconds / questionCount : 0;
-    console.log(`Total time: ${totalTimeInSeconds.toFixed(2)} seconds, Questions: ${questionCount}, Average time: ${averageTime.toFixed(2)} seconds`);
+console.log(`Total time: ${totalTimeInSeconds.toFixed(2)} seconds, Questions: ${questionCount}, Average time per question: ${averageTime.toFixed(2)} seconds`);
     
     const quizResults: QuizResults = {
       type: quizType,
