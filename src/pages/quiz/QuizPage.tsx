@@ -29,9 +29,15 @@ const QuizPage = () => {
   }, [startTime]);
 
   useEffect(() => {
-    setStartTime(Date.now());
-    setAnswer("");
-  }, [currentQuestionIndex]);
+  const now = Date.now();
+  setStartTime(now);
+  setAnswer("");
+
+  const currentQ = questions[currentQuestionIndex];
+  if (currentQ && !currentQ.startTime) {
+    updateQuestion(currentQ.id, currentQ.userAnswer ?? null, now);
+  }
+}, [currentQuestionIndex]);
 
   useEffect(() => {
     if (questions.length === 0) {
