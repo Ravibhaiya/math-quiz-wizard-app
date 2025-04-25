@@ -1,3 +1,4 @@
+
 import { QuizType } from "@/types/quiz";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -51,60 +52,34 @@ const QuizPage = () => {
   const isAnswered = questions.filter(q => q.userAnswer !== undefined && q.userAnswer !== null).length;
 
   const handleSubmitAnswer = () => {
-  if (answer.trim() === "") {
-    toast({
-      title: "Input required",
-      description: "Please enter an answer before continuing.",
-      variant: "destructive",
-    });
-    return;
-  }
+    if (answer.trim() === "") {
+      toast({
+        title: "Input required",
+        description: "Please enter an answer before continuing.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-  // Convert string to number and ensure it's saved correctly
-  const numericAnswer = parseFloat(answer);
-  console.log(`Submitting answer: ${numericAnswer} for question ${currentQuestion.id}`);
-  
-  // For all questions including the last one
-  if (currentQuestionIndex < questions.length - 1) {
-    // Update the current question first
-    updateQuestion(currentQuestion.id, numericAnswer);
-    // Then move to next question
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
-  } else {
-    // For the last question - create a copy of questions with the last answer
-    const updatedQuestions = [...questions];
-    const lastQuestion = {...updatedQuestions[currentQuestionIndex]};
-    lastQuestion.userAnswer = numericAnswer;
-    lastQuestion.endTime = Date.now();
-    updatedQuestions[currentQuestionIndex] = lastQuestion;
+    // Convert string to number and ensure it's saved correctly
+    const numericAnswer = parseFloat(answer);
+    console.log(`Submitting answer: ${numericAnswer} for question ${currentQuestion.id}`);
     
-    // Use this updated array to calculate results directly
-    const manualResults = {
-      type: type as QuizType,
-      totalQuestions: updatedQuestions.length,
-      correctAnswers: updatedQuestions.filter(q => 
-        q.userAnswer !== undefined && Math.abs(q.userAnswer - q.correctAnswer) < 0.001
-      ).length,
-      incorrectAnswers: 0, // Will be calculated below
-      accuracy: 0, // Will be calculated below
-      averageTime: updatedQuestions.reduce((sum, q) => 
-        sum + ((q.endTime || Date.now()) - q.startTime) / 1000, 0
-      ) / updatedQuestions.length,
-      questions: updatedQuestions
-    };
-    
-    manualResults.incorrectAnswers = manualResults.totalQuestions - manualResults.correctAnswers;
-    manualResults.accuracy = (manualResults.correctAnswers / manualResults.totalQuestions) * 100;
-    
-    console.log("Manual final quiz results:", manualResults);
-    
-    // Also update the state for consistency
+    // Update the question with the answer regardless of if it's the last one or not
     updateQuestion(currentQuestion.id, numericAnswer);
     
-    // Navigate with our manually calculated results
-    navigate("/results", { state: manualResults });
-  }
-};
+    // For all questions including the last one
+    if (currentQuestionIndex < questions.length - 1) {
+      // Move to next question
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else {
+      // For the last question - calculate results and navigate
+      console.log("Last question answered, calculating results...");
+      const results = calculateResults();
+      console.log("Navigating to results with:", results);
+      navigate("/results", { state: results });
+    }
+  };
 
   const formatQuizTypeText = (type: string = "") => {
     return type.charAt(0).toUpperCase() + type.slice(1);

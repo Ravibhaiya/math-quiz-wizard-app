@@ -58,7 +58,9 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         id: q.id,
         question: q.question,
         correctAnswer: q.correctAnswer,
-        userAnswer: q.userAnswer
+        userAnswer: q.userAnswer,
+        startTime: q.startTime,
+        endTime: q.endTime
       }))
     );
 
@@ -76,15 +78,23 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       ? (correctAnswers / completedQuestions.length) * 100 
       : 0;
     
-    // Calculate the time taken for each question and then average it
-    const timeTaken = completedQuestions.map(q => 
-      ((q.endTime || Date.now()) - q.startTime) / 1000 // Convert to seconds
-    );
+    // Calculate the time taken for each question (in seconds)
+    let totalTimeInSeconds = 0;
+    let questionCount = 0;
     
-    const averageTime = timeTaken.length > 0 
-      ? timeTaken.reduce((sum, time) => sum + time, 0) / timeTaken.length
-      : 0;
-
+    completedQuestions.forEach(q => {
+      if (q.endTime && q.startTime) {
+        const questionTimeInSeconds = (q.endTime - q.startTime) / 1000;
+        console.log(`Question ${q.id} time: ${questionTimeInSeconds.toFixed(2)} seconds`);
+        totalTimeInSeconds += questionTimeInSeconds;
+        questionCount++;
+      }
+    });
+    
+    // Calculate average time per question (in seconds)
+    const averageTime = questionCount > 0 ? totalTimeInSeconds / questionCount : 0;
+    console.log(`Total time: ${totalTimeInSeconds.toFixed(2)} seconds, Questions: ${questionCount}, Average time: ${averageTime.toFixed(2)} seconds`);
+    
     const quizResults: QuizResults = {
       type: quizType,
       totalQuestions: questions.length,

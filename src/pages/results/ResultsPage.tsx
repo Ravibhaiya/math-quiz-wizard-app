@@ -62,6 +62,13 @@ const ResultsPage = () => {
     
     return Number(userAnswer) === Number(correctAnswer);
   };
+  
+  // Format seconds to mm:ss format
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-[#f0f4f8] to-[#d0e1f9] p-4 overflow-auto">
@@ -103,7 +110,7 @@ const ResultsPage = () => {
 
               <div className="bg-gray-50 p-4 rounded-md text-center border">
                 <div className="text-sm text-muted-foreground mb-2">Average Time per Question</div>
-                <div className="text-xl font-bold">{results.averageTime.toFixed(1)} seconds</div>
+                <div className="text-xl font-bold">{formatTime(results.averageTime)} ({results.averageTime.toFixed(1)} seconds)</div>
               </div>
             </div>
 
