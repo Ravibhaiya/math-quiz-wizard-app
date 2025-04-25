@@ -101,7 +101,7 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       correctAnswers,
       incorrectAnswers,
       accuracy,
-      averageTime, // This is now properly the average time per question
+      averageTime, // This is properly the average time per question
       questions: currentQuestions
     };
     

@@ -105,7 +105,7 @@ const QuizPage = () => {
         ).length,
         incorrectAnswers: 0, // Will be calculated below
         accuracy: 0, // Will be calculated below
-        averageTime: averageTimePerQuestion, // This is now properly set as the average time per question
+        averageTime: averageTimePerQuestion, // This is now properly the average time per question
         questions: updatedQuestions
       };
       
