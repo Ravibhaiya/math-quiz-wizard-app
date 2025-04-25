@@ -23,14 +23,21 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [questions, setQuestions] = useState<Question[]>([]);
   const [results, setResults] = useState<QuizResults | null>(null);
 
-  const updateQuestion = (id: number, answer: number) => {
-    console.log(`Updating question ${id} with answer: ${answer}`);
-    setQuestions((prevQuestions) =>
-      prevQuestions.map((q) =>
-        q.id === id ? { ...q, userAnswer: answer, endTime: Date.now() } : q
-      )
-    );
-  };
+  const updateQuestion = (id: number, answer: number, time?: number) => {
+  setQuestions((prevQuestions) =>
+    prevQuestions.map((q) => {
+      if (q.id === id) {
+        return {
+          ...q,
+          userAnswer: answer,
+          startTime: q.startTime ?? time, // set startTime only if not already set
+          endTime: time ?? Date.now(),    // set endTime if provided, else use now
+        };
+      }
+      return q;
+    })
+  );
+};
 
   // Helper function to strictly compare answers with proper number comparison
   const areAnswersEqual = (userAnswer: number | undefined | null, correctAnswer: number) => {
