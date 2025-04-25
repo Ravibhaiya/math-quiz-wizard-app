@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +18,8 @@ interface QuizSettingsFormProps {
     showTerms?: boolean;
     showFraction?: boolean;
     showDecimal?: boolean;
+    maxDigits?: number;
+    maxTerms?: number;
   };
 }
 
@@ -96,7 +97,7 @@ export const QuizSettingsForm = ({ type, options = {} }: QuizSettingsFormProps) 
               <Slider
                 id="numDigits"
                 min={1}
-                max={3}
+                max={options.maxDigits || 3}
                 step={1}
                 value={[numDigits]}
                 onValueChange={(value) => setNumDigits(value[0])}
@@ -104,7 +105,7 @@ export const QuizSettingsForm = ({ type, options = {} }: QuizSettingsFormProps) 
               />
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>1</span>
-                <span>3</span>
+                <span>{options.maxDigits || 3}</span>
               </div>
             </div>
           )}
@@ -117,7 +118,7 @@ export const QuizSettingsForm = ({ type, options = {} }: QuizSettingsFormProps) 
               <Slider
                 id="terms"
                 min={2}
-                max={5}
+                max={options.maxTerms || 5}
                 step={1}
                 value={[terms]}
                 onValueChange={(value) => setTerms(value[0])}
@@ -125,7 +126,7 @@ export const QuizSettingsForm = ({ type, options = {} }: QuizSettingsFormProps) 
               />
               <div className="flex justify-between text-xs text-muted-foreground">
                 <span>2</span>
-                <span>5</span>
+                <span>{options.maxTerms || 5}</span>
               </div>
             </div>
           )}

@@ -14,7 +14,9 @@ const AdditionSettingsPage = () => {
           type="addition" 
           options={{ 
             showDigits: true, 
-            showTerms: true 
+            showTerms: true,
+            maxDigits: 5,  // New max digits for addition
+            maxTerms: 25   // New max terms for addition
           }} 
         />
       </div>
