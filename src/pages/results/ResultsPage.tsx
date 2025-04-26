@@ -61,21 +61,20 @@ const ResultsPage = () => {
   };
 
   const formatReadableTime = (seconds: number) => {
-    const roundedSeconds = Number((seconds).toFixed(2));
-    
-    if (roundedSeconds < 60) {
-      return `${roundedSeconds.toFixed(2)} seconds`;
+    if (seconds < 60) {
+      return `${seconds} second`;
     } else {
-      const minutes = Math.floor(roundedSeconds / 60);
-      const remainingSeconds = Number((roundedSeconds % 60).toFixed(2));
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = Math.round(seconds % 60);
       
-      const minuteText = minutes === 1 ? 'minute' : 'minutes';
+      const minuteText = 'minute';
+      const secondText = 'second';
       
       if (remainingSeconds === 0) {
         return `${minutes} ${minuteText}`;
       }
       
-      return `${minutes} ${minuteText} ${remainingSeconds.toFixed(2)} seconds`;
+      return `${minutes} ${minuteText} ${remainingSeconds} ${secondText}`;
     }
   };
 

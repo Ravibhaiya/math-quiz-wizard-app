@@ -54,33 +54,22 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
 
     const currentQuestions = [...questions];
-    
     const completedQuestions = currentQuestions.filter(q => q.userAnswer !== undefined && q.userAnswer !== null);
-    
-    const correctAnswers = completedQuestions.filter(q => 
-      areAnswersEqual(q.userAnswer, q.correctAnswer)
-    ).length;
-    
+    const correctAnswers = completedQuestions.filter(q => areAnswersEqual(q.userAnswer, q.correctAnswer)).length;
     const incorrectAnswers = completedQuestions.length - correctAnswers;
-    
-    const accuracy = completedQuestions.length > 0 
-      ? (correctAnswers / completedQuestions.length) * 100 
-      : 0;
+    const accuracy = completedQuestions.length > 0 ? (correctAnswers / completedQuestions.length) * 100 : 0;
     
     let totalTimeInSeconds = 0;
     let questionCount = 0;
     
     completedQuestions.forEach(q => {
       if (q.endTime && q.startTime) {
-        const questionTimeInSeconds = (q.endTime - q.startTime) / 1000;
-        totalTimeInSeconds += questionTimeInSeconds;
+        totalTimeInSeconds += (q.endTime - q.startTime) / 1000;
         questionCount++;
       }
     });
     
-    const averageTime = questionCount > 0 
-      ? Number((totalTimeInSeconds / questionCount).toFixed(2)) 
-      : 0;
+    const averageTime = questionCount > 0 ? Math.round(totalTimeInSeconds / questionCount) : 0;
     
     const quizResults: QuizResults = {
       type: quizType,
@@ -92,7 +81,6 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       questions: currentQuestions
     };
     
-    console.log("Final quiz results:", quizResults);
     setResults(quizResults);
     return quizResults;
   };
