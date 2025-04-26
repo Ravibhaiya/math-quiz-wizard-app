@@ -57,7 +57,6 @@ const QuizPage = () => {
   const isAnswered = questions.filter(q => q.userAnswer !== undefined && q.userAnswer !== null).length;
 
   const handleSubmitAnswer = () => {
-  const handleSubmitAnswer = () => {
   if (answer.trim() === "") {
     toast({
       title: "Input required",
