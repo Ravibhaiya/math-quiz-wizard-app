@@ -1,5 +1,5 @@
 
-export type QuizType = 'addition' | 'subtraction' | 'multiplication' | 'division' | 'percentage';
+export type QuizType = 'addition' | 'subtraction' | 'multiplication' | 'division';
 
 export interface QuizSettings {
   questionCount: number;
@@ -7,8 +7,6 @@ export interface QuizSettings {
   terms?: number;
   includeFraction?: boolean;
   includeDecimal?: boolean;
-  reverseMode?: boolean;
-  maxDenominator?: number;
 }
 
 export interface Question {
@@ -18,7 +16,6 @@ export interface Question {
   userAnswer?: number | null;
   startTime: number;
   endTime?: number;
-  isPercentageQuestion?: boolean;
 }
 
 export interface QuizResults {
