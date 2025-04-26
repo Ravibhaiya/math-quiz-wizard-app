@@ -1,3 +1,4 @@
+
 import { QuizType } from "@/types/quiz";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -34,7 +35,7 @@ const QuizPage = () => {
 
     const currentQ = questions[currentQuestionIndex];
     if (currentQ && !currentQ.startTime) {
-      updateQuestion(currentQ.id, currentQ.userAnswer ?? null, now);
+      updateQuestion(currentQ.id, currentQ.userAnswer, now);
     }
   }, [currentQuestionIndex]);
 

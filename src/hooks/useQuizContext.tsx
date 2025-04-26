@@ -9,7 +9,7 @@ interface QuizContextProps {
   setQuizType: (type: QuizType) => void;
   setSettings: (settings: QuizSettings) => void;
   setQuestions: (questions: Question[]) => void;
-  updateQuestion: (id: number, answer: number) => void;
+  updateQuestion: (id: number, answer: number | null, time?: number) => void;
   calculateResults: () => QuizResults;
   resetQuiz: () => void;
 }
@@ -22,27 +22,25 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [questions, setQuestions] = useState<Question[]>([]);
   const [results, setResults] = useState<QuizResults | null>(null);
 
-  const updateQuestion = (id: number, answer: number, time?: number) => {
-  setQuestions((prevQuestions) =>
-    prevQuestions.map((q) => {
-      if (q.id === id) {
-        return {
-          ...q,
-          userAnswer: answer,
-          startTime: q.startTime ?? time, // set startTime only if not already set
-          endTime: time ?? Date.now(),    // set endTime if provided, else use now
-        };
-      }
-      return q;
-    })
-  );
-};
+  const updateQuestion = (id: number, answer: number | null, time?: number) => {
+    setQuestions((prevQuestions) =>
+      prevQuestions.map((q) => {
+        if (q.id === id) {
+          return {
+            ...q,
+            userAnswer: answer,
+            startTime: q.startTime ?? time, // set startTime only if not already set
+            endTime: time ?? Date.now(),    // set endTime if provided, else use now
+          };
+        }
+        return q;
+      })
+    );
+  };
 
-  // Helper function to strictly compare answers with proper number comparison
   const areAnswersEqual = (userAnswer: number | undefined | null, correctAnswer: number) => {
     if (userAnswer === undefined || userAnswer === null) return false;
     
-    // Handle floating point comparison with small epsilon
     if (Math.abs(Number(userAnswer) - Number(correctAnswer)) < 0.001) {
       return true;
     }
@@ -57,7 +55,6 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const currentQuestions = [...questions];
     
-    // Log all questions with their answers for debugging
     console.log("Questions with answers for results calculation:", 
       currentQuestions.map(q => ({
         id: q.id,
@@ -81,7 +78,6 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       ? (correctAnswers / completedQuestions.length) * 100 
       : 0;
     
-    // Calculate total time taken and average time per question
     let totalTimeInSeconds = 0;
     let questionCount = 0;
     
@@ -94,7 +90,6 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     });
     
-    // Calculate average time per question
     const averageTime = questionCount > 0 ? totalTimeInSeconds / questionCount : 0;
     console.log(`Total time: ${totalTimeInSeconds.toFixed(2)} seconds, Questions: ${questionCount}, Average time per question: ${averageTime.toFixed(2)} seconds`);
     
