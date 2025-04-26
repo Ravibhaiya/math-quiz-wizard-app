@@ -1,4 +1,3 @@
-
 import { QuizType } from "@/types/quiz";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -14,7 +13,7 @@ const QuizPage = () => {
   const navigate = useNavigate();
   const { type } = useParams<{ type: string }>();
   const { toast } = useToast();
-  const { questions, updateQuestion, calculateResults } = useQuizContext();
+  const { questions, updateQuestion, calculateResults, resetQuiz } = useQuizContext();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answer, setAnswer] = useState<string>("");
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -84,6 +83,15 @@ const QuizPage = () => {
     }
   };
 
+  const handleBackClick = () => {
+    resetQuiz();
+    if (type) {
+      navigate(`/${type}/settings`);
+    } else {
+      navigate('/');
+    }
+  };
+
   const formatQuizTypeText = (type: string = "") => {
     return type.charAt(0).toUpperCase() + type.slice(1);
   };
@@ -99,10 +107,15 @@ const QuizPage = () => {
       <div className="w-full max-w-md">
         <Card className="mb-4">
           <CardContent className="pt-6">
-            <div className="flex justify-between items-center mb-4">
-              <div className="text-sm font-medium">
-                Question {currentQuestionIndex + 1} of {questions.length}
-              </div>
+            <div className="flex items-center justify-between mb-4">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={handleBackClick}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
               <div className="flex items-center text-sm font-medium">
                 <Clock className="h-4 w-4 mr-1" />
                 {formatTime(elapsedTime)}
