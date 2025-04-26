@@ -13,7 +13,6 @@ const ResultsPage = () => {
   const { quizType, resetQuiz, results: contextResults } = useQuizContext();
   const results = location.state as QuizResults || contextResults;
 
-  // Redirect if no results
   useEffect(() => {
     if (!results) {
       navigate("/");
@@ -21,7 +20,6 @@ const ResultsPage = () => {
   }, [results, navigate]);
 
   useEffect(() => {
-    // Log all questions and answers when component mounts
     if (results && results.questions) {
       console.log("Results page questions:", results.questions.map(q => ({
         id: q.id,
@@ -30,13 +28,12 @@ const ResultsPage = () => {
         userAnswer: q.userAnswer
       })));
       
-      // Log the average time to verify it's correct
       console.log("Average time per question:", results.averageTime);
     }
   }, [results]);
 
   if (!results) {
-    return null; // Don't render anything before redirect
+    return null;
   }
 
   const handleRetakeQuiz = () => {
@@ -53,40 +50,32 @@ const ResultsPage = () => {
     return type.charAt(0).toUpperCase() + type.slice(1);
   };
 
-  // Helper function to strictly compare answers, accounting for floating point precision issues
   const areAnswersEqual = (userAnswer: number | undefined | null, correctAnswer: number) => {
     if (userAnswer === undefined || userAnswer === null) return false;
     
-    // Handle floating point comparison with small epsilon
     if (Math.abs(Number(userAnswer) - Number(correctAnswer)) < 0.001) {
       return true;
     }
     
     return Number(userAnswer) === Number(correctAnswer);
   };
-  
-  // Improved function to format time in a readable way
+
   const formatReadableTime = (seconds: number) => {
-    // Make sure we're working with the actual average time per question
-    if (seconds < 60) {
-      // If less than a minute, show in seconds
-      return `${seconds.toFixed(1)} seconds`;
+    const roundedSeconds = Math.round(seconds * 10) / 10;
+    
+    if (roundedSeconds < 60) {
+      return `${roundedSeconds.toFixed(1)} seconds`;
     } else {
-      // If a minute or more, show in minutes and seconds format
-      const minutes = Math.floor(seconds / 60);
-      const remainingSeconds = Math.floor(seconds % 60);
+      const minutes = Math.floor(roundedSeconds / 60);
+      const remainingSeconds = Math.round(roundedSeconds % 60);
       
-      // Handle singular/plural for minutes
-      const minuteText = minutes === 1 ? "minute" : "minutes";
+      const minuteText = minutes === 1 ? 'minute' : 'minutes';
       
-      // Only include seconds part if there are seconds to show
-      if (remainingSeconds > 0) {
-        // Handle singular/plural for seconds
-        const secondText = remainingSeconds === 1 ? "second" : "seconds";
-        return `${minutes} ${minuteText} ${remainingSeconds} ${secondText}`;
-      } else {
+      if (remainingSeconds === 0) {
         return `${minutes} ${minuteText}`;
       }
+      
+      return `${minutes} ${minuteText} ${remainingSeconds} seconds`;
     }
   };
 
@@ -161,7 +150,6 @@ const ResultsPage = () => {
             
             <div className="space-y-4">
               {results.questions.map((question, index) => {
-                // Log each question for debugging
                 console.log(`Question ${index + 1}:`, {
                   question: question.question,
                   correctAnswer: question.correctAnswer,

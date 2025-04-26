@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { QuizSettings, QuizType, QuizResults, Question } from '@/types/quiz';
 
@@ -56,7 +55,6 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       throw new Error('Quiz type or settings not defined');
     }
 
-    // Create a copy of the questions to ensure we're not losing state
     const currentQuestions = [...questions];
     
     // Log all questions with their answers for debugging
@@ -72,12 +70,10 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
 
     const completedQuestions = currentQuestions.filter(q => q.userAnswer !== undefined && q.userAnswer !== null);
-    console.log(`Completed questions count: ${completedQuestions.length}`);
     
     const correctAnswers = completedQuestions.filter(q => 
       areAnswersEqual(q.userAnswer, q.correctAnswer)
     ).length;
-    console.log(`Correct answers count: ${correctAnswers}`);
     
     const incorrectAnswers = completedQuestions.length - correctAnswers;
     
@@ -85,7 +81,7 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       ? (correctAnswers / completedQuestions.length) * 100 
       : 0;
     
-    // Calculate the time taken for each question (in seconds)
+    // Calculate total time taken and average time per question
     let totalTimeInSeconds = 0;
     let questionCount = 0;
     
@@ -98,7 +94,7 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       }
     });
     
-    // Calculate average time per question (in seconds)
+    // Calculate average time per question
     const averageTime = questionCount > 0 ? totalTimeInSeconds / questionCount : 0;
     console.log(`Total time: ${totalTimeInSeconds.toFixed(2)} seconds, Questions: ${questionCount}, Average time per question: ${averageTime.toFixed(2)} seconds`);
     
@@ -108,7 +104,7 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       correctAnswers,
       incorrectAnswers,
       accuracy,
-      averageTime, // This is properly the average time per question
+      averageTime,
       questions: currentQuestions
     };
     
