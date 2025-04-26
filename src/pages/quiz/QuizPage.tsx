@@ -57,31 +57,70 @@ const QuizPage = () => {
   const isAnswered = questions.filter(q => q.userAnswer !== undefined && q.userAnswer !== null).length;
 
   const handleSubmitAnswer = () => {
-    if (answer.trim() === "") {
-      toast({
-        title: "Input required",
-        description: "Please enter an answer before continuing.",
-        variant: "destructive",
-      });
-      return;
-    }
+  if (answer.trim() === "") {
+    toast({
+      title: "Input required",
+      description: "Please enter an answer before continuing.",
+      variant: "destructive",
+    });
+    return;
+  }
 
-    const numericAnswer = parseFloat(answer);
-    console.log(`Submitting answer: ${numericAnswer} for question ${currentQuestion.id}`);
+  // Convert string to number and ensure it's saved correctly
+  const numericAnswer = parseFloat(answer);
+  console.log(`Submitting answer: ${numericAnswer} for question ${currentQuestion.id}`);
+  
+  // For all questions including the last one
+  if (currentQuestionIndex < questions.length - 1) {
+    // Update the current question first
+    updateQuestion(currentQuestion.id, numericAnswer);
+    // Then move to next question
+    setCurrentQuestionIndex(currentQuestionIndex + 1);
+  } else {
+    // For the last question - create a copy of questions with the last answer
+    const updatedQuestions = [...questions];
+    const lastQuestion = {...updatedQuestions[currentQuestionIndex]};
+    lastQuestion.userAnswer = numericAnswer;
+    lastQuestion.endTime = Date.now();
+    updatedQuestions[currentQuestionIndex] = lastQuestion;
     
-    if (currentQuestionIndex < questions.length - 1) {
-      updateQuestion(currentQuestion.id, numericAnswer);
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      const now = Date.now();
-      
-      updateQuestion(currentQuestion.id, numericAnswer, now);
-      
-      const results = calculateResults();
-      
-      navigate("/results", { state: results });
-    }
-  };
+    // Calculate time taken for each question in seconds
+    const timeTakenPerQuestion = updatedQuestions.map(q => 
+      ((q.endTime || Date.now()) - q.startTime) / 1000 // Convert to seconds
+    );
+    
+    // Calculate average time properly
+    const totalTimeTaken = timeTakenPerQuestion.reduce((sum, time) => sum + time, 0);
+    const averageTimeTaken = timeTakenPerQuestion.length > 0 ? 
+      totalTimeTaken / timeTakenPerQuestion.length : 0;
+    
+    // Use this updated array to calculate results directly
+    const manualResults = {
+      type: type as QuizType,
+      totalQuestions: updatedQuestions.length,
+      correctAnswers: updatedQuestions.filter(q => 
+        q.userAnswer !== undefined && Math.abs(Number(q.userAnswer) - Number(q.correctAnswer)) < 0.001
+      ).length,
+      incorrectAnswers: 0, // Will be calculated below
+      accuracy: 0, // Will be calculated below
+      averageTime: averageTimeTaken,
+      questions: updatedQuestions
+    };
+    
+    manualResults.incorrectAnswers = manualResults.totalQuestions - manualResults.correctAnswers;
+    manualResults.accuracy = (manualResults.correctAnswers / manualResults.totalQuestions) * 100;
+    
+    console.log("Manual final quiz results:", manualResults);
+    console.log("Time taken per question (seconds):", timeTakenPerQuestion);
+    console.log("Average time taken (seconds):", averageTimeTaken);
+    
+    // Also update the state for consistency
+    updateQuestion(currentQuestion.id, numericAnswer);
+    
+    // Navigate with our manually calculated results
+    navigate("/results", { state: manualResults });
+  }
+};
 
   const handleBackClick = () => {
     resetQuiz();
