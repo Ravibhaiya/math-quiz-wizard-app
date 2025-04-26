@@ -61,13 +61,13 @@ const ResultsPage = () => {
   };
 
   const formatReadableTime = (seconds: number) => {
-    const roundedSeconds = Math.round(seconds * 10) / 10;
+    const roundedSeconds = Number((seconds).toFixed(2));
     
     if (roundedSeconds < 60) {
-      return `${roundedSeconds.toFixed(1)} seconds`;
+      return `${roundedSeconds.toFixed(2)} seconds`;
     } else {
       const minutes = Math.floor(roundedSeconds / 60);
-      const remainingSeconds = Math.round(roundedSeconds % 60);
+      const remainingSeconds = Number((roundedSeconds % 60).toFixed(2));
       
       const minuteText = minutes === 1 ? 'minute' : 'minutes';
       
@@ -75,7 +75,7 @@ const ResultsPage = () => {
         return `${minutes} ${minuteText}`;
       }
       
-      return `${minutes} ${minuteText} ${remainingSeconds} seconds`;
+      return `${minutes} ${minuteText} ${remainingSeconds.toFixed(2)} seconds`;
     }
   };
 
@@ -119,7 +119,9 @@ const ResultsPage = () => {
 
               <div className="bg-gray-50 p-4 rounded-md text-center border">
                 <div className="text-sm text-muted-foreground mb-2">Average Time per Question</div>
-                <div className="text-xl font-bold">{formatReadableTime(results.averageTime)}</div>
+                <div className="text-xl font-bold">
+                  {formatReadableTime(results.averageTime)}
+                </div>
               </div>
             </div>
 

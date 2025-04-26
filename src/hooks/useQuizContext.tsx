@@ -29,8 +29,8 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           return {
             ...q,
             userAnswer: answer,
-            startTime: q.startTime ?? time, // set startTime only if not already set
-            endTime: time ?? Date.now(),    // set endTime if provided, else use now
+            startTime: q.startTime ?? time,
+            endTime: time ?? Date.now(),
           };
         }
         return q;
@@ -55,17 +55,6 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const currentQuestions = [...questions];
     
-    console.log("Questions with answers for results calculation:", 
-      currentQuestions.map(q => ({
-        id: q.id,
-        question: q.question,
-        correctAnswer: q.correctAnswer,
-        userAnswer: q.userAnswer,
-        startTime: q.startTime,
-        endTime: q.endTime
-      }))
-    );
-
     const completedQuestions = currentQuestions.filter(q => q.userAnswer !== undefined && q.userAnswer !== null);
     
     const correctAnswers = completedQuestions.filter(q => 
@@ -84,14 +73,14 @@ export const QuizProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     completedQuestions.forEach(q => {
       if (q.endTime && q.startTime) {
         const questionTimeInSeconds = (q.endTime - q.startTime) / 1000;
-        console.log(`Question ${q.id} time: ${questionTimeInSeconds.toFixed(2)} seconds`);
         totalTimeInSeconds += questionTimeInSeconds;
         questionCount++;
       }
     });
     
-    const averageTime = questionCount > 0 ? totalTimeInSeconds / questionCount : 0;
-    console.log(`Total time: ${totalTimeInSeconds.toFixed(2)} seconds, Questions: ${questionCount}, Average time per question: ${averageTime.toFixed(2)} seconds`);
+    const averageTime = questionCount > 0 
+      ? Number((totalTimeInSeconds / questionCount).toFixed(2)) 
+      : 0;
     
     const quizResults: QuizResults = {
       type: quizType,
