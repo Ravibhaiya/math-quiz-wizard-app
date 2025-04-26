@@ -11,6 +11,7 @@ import AdditionSettingsPage from "./pages/addition/AdditionSettingsPage";
 import SubtractionSettingsPage from "./pages/subtraction/SubtractionSettingsPage";
 import MultiplicationSettingsPage from "./pages/multiplication/MultiplicationSettingsPage";
 import DivisionSettingsPage from "./pages/division/DivisionSettingsPage";
+import PercentageSettingsPage from "./pages/percentage/PercentageSettingsPage";
 import QuizPage from "./pages/quiz/QuizPage";
 import ResultsPage from "./pages/results/ResultsPage";
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/subtraction/settings" element={<SubtractionSettingsPage />} />
             <Route path="/multiplication/settings" element={<MultiplicationSettingsPage />} />
             <Route path="/division/settings" element={<DivisionSettingsPage />} />
+            <Route path="/percentage/settings" element={<PercentageSettingsPage />} />
             <Route path="/quiz/:type" element={<QuizPage />} />
             <Route path="/results" element={<ResultsPage />} />
             <Route path="*" element={<NotFound />} />
