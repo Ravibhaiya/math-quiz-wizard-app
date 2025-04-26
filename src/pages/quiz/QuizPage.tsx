@@ -72,11 +72,17 @@ const QuizPage = () => {
   
   // For all questions including the last one
   if (currentQuestionIndex < questions.length - 1) {
-    // Update the current question first
-    updateQuestion(currentQuestion.id, numericAnswer);
-    // Then move to next question
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
-  } else {
+  // ✅ Set endTime for the current question
+  const updatedQuestions = [...questions];
+  const currentQ = { ...updatedQuestions[currentQuestionIndex] };
+  currentQ.userAnswer = numericAnswer;
+  currentQ.endTime = Date.now(); // 🚨 Critical line to add
+  updatedQuestions[currentQuestionIndex] = currentQ;
+  
+  // Update state with the new endTime
+  setQuestions(updatedQuestions); // Replace your current updateQuestion call
+  setCurrentQuestionIndex(currentQuestionIndex + 1);
+  }else {
     // For the last question - create a copy of questions with the last answer
     const updatedQuestions = [...questions];
     const lastQuestion = {...updatedQuestions[currentQuestionIndex]};
