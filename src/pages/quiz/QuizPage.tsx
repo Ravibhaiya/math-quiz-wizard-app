@@ -1,3 +1,4 @@
+
 import { QuizType } from "@/types/quiz";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -13,7 +14,7 @@ const QuizPage = () => {
   const navigate = useNavigate();
   const { type } = useParams<{ type: string }>();
   const { toast } = useToast();
-  const { questions, updateQuestion, calculateResults, resetQuiz } = useQuizContext();
+  const { questions, updateQuestion, resetQuiz } = useQuizContext();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answer, setAnswer] = useState<string>("");
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -57,60 +58,63 @@ const QuizPage = () => {
   const isAnswered = questions.filter(q => q.userAnswer !== undefined && q.userAnswer !== null).length;
 
   const handleSubmitAnswer = () => {
-  if (answer.trim() === "") {
-    toast({
-      title: "Input required",
-      description: "Please enter an answer before continuing.",
-      variant: "destructive",
-    });
-    return;
-  }
+    if (answer.trim() === "") {
+      toast({
+        title: "Input required",
+        description: "Please enter an answer before continuing.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-  // Convert string to number and ensure it's saved correctly
-  const numericAnswer = parseFloat(answer);
-  console.log(`Submitting answer: ${numericAnswer} for question ${currentQuestion.id}`);
-  
-  // For all questions including the last one
-  if (currentQuestionIndex < questions.length - 1) {
-    // Update the current question first
-    updateQuestion(currentQuestion.id, numericAnswer);
-    // Then move to next question
-    setCurrentQuestionIndex(currentQuestionIndex + 1);
-  } else {
-    // For the last question - create a copy of questions with the last answer
-    const updatedQuestions = [...questions];
-    const lastQuestion = {...updatedQuestions[currentQuestionIndex]};
-    lastQuestion.userAnswer = numericAnswer;
-    lastQuestion.endTime = Date.now();
-    updatedQuestions[currentQuestionIndex] = lastQuestion;
-    
-    // Use this updated array to calculate results directly
-    const manualResults = {
-      type: type as QuizType,
-      totalQuestions: updatedQuestions.length,
-      correctAnswers: updatedQuestions.filter(q => 
-        q.userAnswer !== undefined && Math.abs(q.userAnswer - q.correctAnswer) < 0.001
-      ).length,
-      incorrectAnswers: 0, // Will be calculated below
-      accuracy: 0, // Will be calculated below
-      averageTime: updatedQuestions.reduce((sum, q) => 
-        sum + ((q.endTime || Date.now()) - q.startTime) / 1000, 0
-      ) / updatedQuestions.length,
-      questions: updatedQuestions
-    };
-    
-    manualResults.incorrectAnswers = manualResults.totalQuestions - manualResults.correctAnswers;
-    manualResults.accuracy = (manualResults.correctAnswers / manualResults.totalQuestions) * 100;
-    
-    console.log("Manual final quiz results:", manualResults);
-    
-    // Also update the state for consistency
-    updateQuestion(currentQuestion.id, numericAnswer);
-    
-    // Navigate with our manually calculated results
-    navigate("/results", { state: manualResults });
-  }
-};
+    const numericAnswer = parseFloat(answer);
+    const now = Date.now();
+    console.log(`Submitting answer: ${numericAnswer} for question ${currentQuestion.id} at ${now}`);
+
+    // Update the current question with user's answer
+    updateQuestion(currentQuestion.id, numericAnswer, now);
+
+    if (currentQuestionIndex < questions.length - 1) {
+      // Move to next question
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else {
+      // For the last question - calculate results and navigate
+      const updatedQuestions = questions.map(q =>
+        q.id === currentQuestion.id
+          ? { ...q, userAnswer: numericAnswer, endTime: now }
+          : q
+      );
+
+      const timeTakenPerQuestion = updatedQuestions.map(q =>
+        (q.endTime! - q.startTime) / 1000
+      );
+
+      const totalTime = timeTakenPerQuestion.reduce((sum, t) => sum + t, 0);
+      const averageTime = timeTakenPerQuestion.length
+        ? totalTime / timeTakenPerQuestion.length
+        : 0;
+
+      const correctCount = updatedQuestions.filter(q =>
+        q.userAnswer !== undefined &&
+        Math.abs(Number(q.userAnswer) - Number(q.correctAnswer)) < 0.001
+      ).length;
+
+      const results = {
+        type: type as QuizType,
+        totalQuestions: updatedQuestions.length,
+        correctAnswers: correctCount,
+        incorrectAnswers: updatedQuestions.length - correctCount,
+        accuracy: (correctCount / updatedQuestions.length) * 100,
+        averageTime,
+        questions: updatedQuestions,
+      };
+
+      console.log("Final quiz results:", results);
+      console.log("Per-question times (s):", timeTakenPerQuestion);
+
+      navigate("/results", { state: results });
+    }
+  };
 
   const handleBackClick = () => {
     resetQuiz();
